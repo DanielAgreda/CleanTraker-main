@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Cada usuario solo puede leer/escribir su propio documento.
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Rutas de camiones: lectura para usuarios autenticados; escritura solo por Admin SDK.
+    match /routes/{routeId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+  }
+}
